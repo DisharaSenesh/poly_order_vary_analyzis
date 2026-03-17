@@ -1,0 +1,77 @@
+# ============================================================================
+# Dynamic Object Trajectory Reconstruction — Default Configuration
+# ============================================================================
+
+# --- Camera intrinsics ---
+camera:
+  fx: 1486.4123717271
+  fy: 1488.6919876408
+  cx: 639.5371967339
+  cy: 431.7580771817
+  distortion: [0.047240116965482692, 0.76857331815544261,
+               0.0005221055479888955, 0.0041421931791450536,
+               -2.9566144231226019]
+  index: 0               # video-capture device index (online mode)
+  width: 1280             # used for pixel-bounds validation
+  height: 960             # used for pixel-bounds validation
+
+# --- Hand–eye calibration (camera → tool) ---
+hand_eye:
+  # Rotation angles in degrees  (Rx @ Ry @ Rz order, matching reference)
+  rx: 1.1239692871
+  ry: -3.7506525776
+  rz: -87.6023477856
+  # Translation in mm
+  tx: 13.1335163602
+  ty: -8.5332482353
+  tz: -89.7669585601
+
+# --- AprilTag detector ---
+apriltag:
+  target_id: 5
+  dictionary: DICT_APRILTAG_36h11
+  corner_refinement: CORNER_REFINE_SUBPIX
+  corner_refine_win: 9
+  corner_refine_max_iter: 200
+  corner_refine_min_acc: 1.0e-4
+
+# --- KUKA robot connection (online mode) ---
+robot:
+  ip: "172.31.1.147"
+  port: 7000
+
+# --- Geometry filtering ---
+filtering:
+  min_ray_angle_deg: 8.0     # reject measurements with median ray angle < threshold
+  min_baseline_mm: 15.0
+  max_baseline_mm: 1500.0     # reject measurements with camera baseline > threshold (mm)
+
+# --- Sliding window ---
+sliding_window:
+  min_size: 10
+  max_size: 20
+
+# --- Solver ---
+# Polynomial order mode:
+#   FIXED  — set manual_order to an integer (e.g. 2); model_orders and lambda_penalty are ignored.
+#   AUTO   — set manual_order to null; model_orders lists candidate orders evaluated with lambda_penalty.
+solver:
+  model_orders: [0, 1, 2, 3, 4]  # AUTO mode only: candidate polynomial orders for selection
+  manual_order: 2              # FIXED mode: polynomial order is locked to this value (set null for AUTO)
+  lambda_penalty: 0.05            # AUTO mode only: complexity penalty weight for model selection
+  bundle_adjustment_interval: 5000  # run BA every N accepted frames (0 to disable)
+
+# --- Logging ---
+logging:
+  output_dir: "output"
+  measurements_file: "measurements.csv"
+  trajectory_file: "trajectory_estimates.csv"
+  model_selection_file: "model_selection.csv"
+  error_metrics_file: "error_metrics.csv"
+
+# --- Plotting ---
+plotting:
+  enabled: true
+  output_dir: "output/plots"
+  dpi: 150
+  figsize: [10, 7]
